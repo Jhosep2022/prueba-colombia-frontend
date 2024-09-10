@@ -1,20 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
 import InputField from './InputField';
 import SocialButton from './SocialButton';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 
 const LoginForm: React.FC = () => {
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null); 
+  const login = useAuthStore((state) => state.login);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!identifier || !password) {
+      setError('Por favor, completa todos los campos.');
+      return;
+    }
+
+    try {
+      await login(identifier, password);
+      navigate('/home');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      setError('Credenciales incorrectas o el usuario no existe.'); 
+    }
+  };
+
   return (
     <div className="w-full p-8 text-white">
       <h2 className="text-3xl font-bold mb-4">SIGN IN</h2>
-      <p className="text-sm mb-6">Sign in with email address</p>
+      <p className="text-sm mb-6">Sign in with username or email address</p>
 
-      <form>
-        <InputField label="Email Address" type="email" placeholder="Yourname@gmail.com" />
-        <InputField label="Password" type="password" placeholder="••••••••" />
+      {error && <div className="mb-4 text-red-500">{error}</div>}
 
-        <button className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-2 rounded-md hover:from-purple-600 hover:to-blue-600 transition-colors">
-          <Link to="/home">Sign In</Link>
+      <form onSubmit={handleSubmit}>
+        <InputField 
+          label="Username or Email"
+          type="text" 
+          placeholder="Your username or email" 
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
+        />
+        <InputField 
+          label="Password" 
+          type="password" 
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)} 
+        />
+
+        <button
+          type="submit" 
+          className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-2 rounded-md hover:from-purple-600 hover:to-blue-600 transition-colors">
+          Sign In
         </button>
       </form>
 

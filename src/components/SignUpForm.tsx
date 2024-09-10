@@ -2,13 +2,45 @@ import React, { useState } from 'react';
 import InputField from './InputField';
 import { Link } from 'react-router-dom';
 import SuccessModal from './SuccessModal'; 
+import { useUsuariosStore } from '../store/usuariosStore';
+import { NewUsuarioDto } from '../model/newUsuarioDto';
 
 const SignUpForm = () => {
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [rolId] = useState(3); 
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const createUsuario = useUsuariosStore((state) => state.createUsuario);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSuccessModalOpen(true);
+    setError(null);
+
+    if (!username || !email || !name || !password) {
+      setError('Por favor, completa todos los campos.');
+      return;
+    }
+
+    const newUsuario: NewUsuarioDto = {
+      username,
+      email,
+      name,
+      password,
+      rolId,
+    };
+
+    try {
+      const token = ''; 
+      await createUsuario(newUsuario, token);
+      setIsSuccessModalOpen(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      setError('Hubo un error al crear el usuario. Inténtalo de nuevo.');
+    }
   };
 
   return (
@@ -16,11 +48,37 @@ const SignUpForm = () => {
       <h2 className="text-3xl font-bold mb-4">SIGN UP</h2>
       <p className="text-sm mb-6">Create your account</p>
 
+      {error && <div className="mb-4 text-red-500">{error}</div>}
+
       <form onSubmit={handleSubmit}>
-        <InputField label="Username" type="text" placeholder="Enter your username" />
-        <InputField label="Email" type="email" placeholder="Enter your email" />
-        <InputField label="Name" type="text" placeholder="Enter your full name" />
-        <InputField label="Password" type="password" placeholder="Create a password" />
+        <InputField 
+          label="Username" 
+          type="text" 
+          placeholder="Enter your username" 
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <InputField 
+          label="Email" 
+          type="email" 
+          placeholder="Enter your email" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <InputField 
+          label="Name" 
+          type="text" 
+          placeholder="Enter your full name" 
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <InputField 
+          label="Password" 
+          type="password" 
+          placeholder="Create a password" 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)} 
+        />
 
         <button
           type="submit"

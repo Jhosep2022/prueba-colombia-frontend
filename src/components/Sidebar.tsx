@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaHome, FaUser, FaUserShield, FaSignOutAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import ConfirmationModal from './ConfirmationModal'; 
+import { useAuthStore } from '../store/authStore';
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const navigate = useNavigate();
-
+  const logout = useAuthStore((state) => state.logout);
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const handleLogout = () => {
@@ -16,7 +17,7 @@ const Sidebar: React.FC = () => {
   };
 
   const confirmLogout = () => {
-    
+    logout();
     setIsLogoutModalOpen(false);
     navigate('/login');
   };
