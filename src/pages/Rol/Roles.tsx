@@ -6,10 +6,12 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import SuccessModal from '../../components/SuccessModal';
 import { useRolesStore } from '../../store/rolesStore';
 import { useAuthStore } from '../../store/authStore';
+import CreateRoleForm from '../../components/CreateRoleForm'; // Importar el formulario
 
 const Roles: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false); // Estado para mostrar u ocultar el formulario
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [deniedMessage, setDeniedMessage] = useState<string | null>(null); // Para el mensaje de denegación
   const navigate = useNavigate();
@@ -35,7 +37,6 @@ const Roles: React.FC = () => {
       const roleToDelete = roles.find(r => r.description === selectedRole);
       if (roleToDelete && roleToDelete.id) {
         if (roleToDelete.id === 3) {
-          // Si intenta eliminar el rol 3, mostramos un mensaje de denegación
           setDeniedMessage('No puedes eliminar el rol "Generico".');
           setIsDeleteModalOpen(false);
         } else {
@@ -52,7 +53,7 @@ const Roles: React.FC = () => {
   };
 
   const handleCreateRole = () => {
-    // Aquí podrías manejar la creación de roles
+    setIsCreateFormOpen(true); // Abrir el formulario de creación de roles
   };
 
   return (
@@ -63,7 +64,7 @@ const Roles: React.FC = () => {
           <h1 className="text-3xl font-bold text-white">Roles</h1>
           <button 
             className="flex items-center bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600"
-            onClick={handleCreateRole}
+            onClick={handleCreateRole} // Mostrar el formulario de creación
           >
             <FaPlus className="mr-2" />
             Crear Rol
@@ -75,6 +76,9 @@ const Roles: React.FC = () => {
             {deniedMessage}
           </div>
         )}
+
+        {/* Mostrar u ocultar el formulario de creación de roles */}
+        {isCreateFormOpen && <CreateRoleForm />}
 
         <ul role="list" className="divide-y divide-gray-100 bg-white shadow-md rounded-md border border-gray-200">
           {roles.map((role) => (

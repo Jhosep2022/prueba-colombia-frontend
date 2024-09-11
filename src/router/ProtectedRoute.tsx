@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
 interface ProtectedRouteProps {
-  requiredRole: number;
+  requiredRole: number[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requiredRole }) => {
@@ -13,7 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requiredRole }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (role !== requiredRole) {
+  if (!requiredRole.includes(role as number)) {
     return <Navigate to="/forbidden" replace />;
   }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt, FaPlus } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import SuccessModal from '../../components/SuccessModal';
@@ -14,7 +14,7 @@ const Users: React.FC = () => {
   const navigate = useNavigate();
 
   const { usuarios, fetchUsuarios, deleteUsuario } = useUsuariosStore();
-  const { token } = useAuthStore(); 
+  const { token, role } = useAuthStore(); 
 
   useEffect(() => {
     if (token) {
@@ -43,7 +43,7 @@ const Users: React.FC = () => {
   };
 
   const handleCreateUser = () => {
-    navigate('/forbidden');
+    navigate('/admin/create-user'); 
   };
 
   const defaultImageUrl = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80';
@@ -56,7 +56,7 @@ const Users: React.FC = () => {
           <h1 className="text-3xl font-bold text-white">Usuarios</h1>
           <button
             className="flex items-center bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600"
-            onClick={handleCreateUser}
+            onClick={handleCreateUser} 
           >
             <FaPlus className="mr-2" />
             Crear Usuario
@@ -69,7 +69,7 @@ const Users: React.FC = () => {
               <div className="flex min-w-0 gap-x-4">
                 <img
                   alt={usuario.name}
-                  src={defaultImageUrl} // Usamos la imagen por defecto para todos
+                  src={defaultImageUrl}
                   className="h-12 w-12 flex-none rounded-full bg-gray-50"
                 />
                 <div className="min-w-0 flex-auto">
@@ -80,17 +80,21 @@ const Users: React.FC = () => {
 
               <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
                 <p className="text-sm leading-6 text-gray-900">
-                  {usuario.rol?.description || 'Sin rol asignado'} {/* Maneja casos donde no haya un rol */}
+                  {usuario.rol?.description || 'Sin rol asignado'}
                 </p>
               </div>
 
               <div className="flex items-center space-x-4">
-                <button className="text-blue-500 hover:text-blue-700">
-                  <FaEdit />
-                </button>
-                <button className="text-red-500 hover:text-red-700" onClick={() => handleDelete(usuario.name)}>
-                  <FaTrashAlt />
-                </button>
+                {role === 2 && (
+                  <>
+                    <button className="text-blue-500 hover:text-blue-700">
+                      <FaEdit />
+                    </button>
+                    <button className="text-red-500 hover:text-red-700" onClick={() => handleDelete(usuario.name)}>
+                      <FaTrashAlt />
+                    </button>
+                  </>
+                )}
               </div>
             </li>
           ))}
